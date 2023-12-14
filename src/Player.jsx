@@ -163,9 +163,11 @@ export default function Player() {
         angularDamping={0.5}
     >
         <mesh castShadow>
-            <icosahedronGeometry args={[0.3, 1]} />
-            {/* Flatshading allow to see better the surface rotate */}
-            <meshStandardMaterial flatShading color="mediumpurple" />
+            <sphereGeometry args={[0.3, 32, 32]} />
+            <meshBasicMaterial
+                color={ [ 1.5, 1, 4 ] }
+                toneMapped={ false }
+            />
         </mesh>
     </RigidBody>
 }
