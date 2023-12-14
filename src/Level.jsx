@@ -2,20 +2,21 @@ import * as THREE from 'three'
 import { RigidBody, CuboidCollider } from '@react-three/rapier'
 import { useState, useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Float, Text, useGLTF } from '@react-three/drei'
+import { Float, Text, useGLTF, MeshTransmissionMaterial } from '@react-three/drei'
 
 /* We use the same geometry for the all level for performance resaons */
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
 
 /* Pre setting the geometries to re use */
-const floor1Material = new THREE.MeshStandardMaterial({ color: 'limegreen' })
-const floor2Material = new THREE.MeshStandardMaterial({ color: 'greenyellow' })
-const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered' })
-const wallMaterial = new THREE.MeshStandardMaterial({ color: 'slategrey' })
+const floorMaterial = new THREE.MeshBasicMaterial({ color: '#242629'})
+
+const wallMaterial = new THREE.MeshStandardMaterial({ color: '#A6AEC2' })
+
+const obstacleColor = [1.5, 0.4, 0.2]
 
 function BlockStart({ position = [0, 0, 0] }) {
     return <group position={position}>
-        <Float floatIntensity={0.25} rotationIntensity={0.25}>
+        <Float floatIntensity={0.45} rotationIntensity={0.45}>
             <Text
                 font="./bebas-neue-v9-latin-regular.woff"
                 scale={0.5}
@@ -26,15 +27,14 @@ function BlockStart({ position = [0, 0, 0] }) {
                 rotation-y={- 0.25}
             >
                 Marble Race
-                <meshBasicMaterial toneMapped={false} />
+                <meshBasicMaterial toneMapped={false} color={[ 1.6, 1, 1 ]} />
             </Text>
         </Float>
         <mesh
             geometry={boxGeometry}
-            material={floor1Material}
+            material={floorMaterial}
             position={[0, - 0.1, 0]}
             scale={[4, 0.2, 4]}
-            receiveShadow
         />
     </group>
 }
@@ -57,10 +57,9 @@ export function BlockSpinner({ position = [0, 0, 0] }) {
         {/* Floor */}
         <mesh
             geometry={boxGeometry}
-            material={floor2Material}
+            material={floorMaterial}
             position={[0, - 0.1, 0]}
             scale={[4, 0.2, 4]}
-            receiveShadow
         />
         {/* Obstacle */}
         <RigidBody
@@ -72,11 +71,15 @@ export function BlockSpinner({ position = [0, 0, 0] }) {
         >
             <mesh
                 geometry={boxGeometry}
-                material={obstacleMaterial}
                 scale={[3.5, 0.3, 0.3]}
-                castShadow
-                receiveShadow
-            />
+            >
+                <MeshTransmissionMaterial
+                    transmission={0.6}
+                    thickness={0.7}
+                    roughness={0.1}
+                    color={obstacleColor}
+                />
+            </mesh>
         </RigidBody>
     </group>
 }
@@ -98,10 +101,9 @@ export function BlockLimbo({ position = [0, 0, 0] }) {
         {/* Floor */}
         <mesh
             geometry={boxGeometry}
-            material={floor2Material}
+            material={floorMaterial}
             position={[0, - 0.1, 0]}
             scale={[4, 0.2, 4]}
-            receiveShadow
         />
         {/* Obstacle */}
         <RigidBody
@@ -113,11 +115,15 @@ export function BlockLimbo({ position = [0, 0, 0] }) {
         >
             <mesh
                 geometry={boxGeometry}
-                material={obstacleMaterial}
                 scale={[3.5, 0.3, 0.3]}
-                castShadow
-                receiveShadow
-            />
+            >
+                <MeshTransmissionMaterial
+                    transmission={0.6}
+                    thickness={0.7}
+                    roughness={0.1}
+                    color={obstacleColor}
+                />
+            </mesh>
         </RigidBody>
     </group>
 }
@@ -139,10 +145,9 @@ export function BlockSlider({ position = [0, 0, 0] }) {
         {/* Floor */}
         <mesh
             geometry={boxGeometry}
-            material={floor2Material}
+            material={floorMaterial}
             position={[0, - 0.1, 0]}
             scale={[4, 0.2, 4]}
-            receiveShadow
         />
         {/* Obstacle */}
         <RigidBody
@@ -154,21 +159,21 @@ export function BlockSlider({ position = [0, 0, 0] }) {
         >
             <mesh
                 geometry={boxGeometry}
-                material={obstacleMaterial}
                 scale={[1.5, 1.5, 0.3]}
-                castShadow
-                receiveShadow
-            />
+            >
+                <MeshTransmissionMaterial
+                    transmission={0.6}
+                    thickness={0.7}
+                    roughness={0.1}
+                    color={obstacleColor}
+                />
+            </mesh>
         </RigidBody>
     </group>
 }
 
 function BlockEnd({ position = [0, 0, 0] }) {
     const hamburger = useGLTF('/hamburger.glb')
-    /* Add shadows on hamburger */
-    hamburger.scene.children.forEach((child) => {
-        child.castShadow = true
-    })
 
     return <group position={position}>
         <Text
@@ -181,10 +186,9 @@ function BlockEnd({ position = [0, 0, 0] }) {
         </Text>
         <mesh
             geometry={boxGeometry}
-            material={floor1Material}
-            position={[0, 0, 0]}
+            material={floorMaterial}
+            position={[0, - 0.1, 0]}
             scale={[4, 0.2, 4]}
-            receiveShadow
         />
         <RigidBody
             type="fixed"
@@ -209,21 +213,18 @@ function Bounds({ length = 1 }) {
                 geometry={boxGeometry}
                 material={wallMaterial}
                 scale={[0.3, 1.5, length * 4]}
-                castShadow
             />
             <mesh
                 position={[- 2.15, 0.75, -(length * 2) + 2]}
                 geometry={boxGeometry}
                 material={wallMaterial}
                 scale={[0.3, 1.5, length * 4]}
-                receiveShadow
             />
             <mesh
                 position={[0, 0.75, -(length * 4) + 2]}
                 geometry={boxGeometry}
                 material={wallMaterial}
                 scale={[4, 1.5, 0.3]}
-                receiveShadow
             />
             {/* Collider for the floor */}
             <CuboidCollider

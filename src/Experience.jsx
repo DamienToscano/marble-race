@@ -1,4 +1,5 @@
 import { Physics } from '@react-three/rapier'
+import { Bloom, EffectComposer } from '@react-three/postprocessing'
 import Lights from './Lights.jsx'
 import { Level } from './Level.jsx'
 import Player from './Player.jsx'
@@ -11,7 +12,16 @@ export default function Experience() {
 
     return <>
 
-        <color attach="background" args={['#bdedfc']} />
+        <color attach="background" args={['#242629']} />
+        <EffectComposer
+            disableNormalPass
+        >
+            <Bloom 
+                luminanceThreshold={ 1.1 }
+                mipmapBlur
+                intensity={ 0.9 }
+            />
+        </EffectComposer>
 
         <Physics debug={false}>
             <Lights />
